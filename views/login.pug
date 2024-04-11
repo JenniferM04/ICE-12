@@ -1,0 +1,15 @@
+extends ./index
+block content
+    if errorMessage
+        .alert.alert-danger !{errorMessage}
+
+    form.border.p-4(method='post', action='/login')
+        label.form-label(for="username") Username:
+        input.form-control(type="text", name="username", id="username")
+        br
+        label.form-label(for="password") Password: 
+        input.form-control(type="password", name="password", id="password")
+        br
+        input.btn.btn-primary(type="submit", value="Log In")
+        div.col-12.pt-4  Don't have an account? 
+            a(href='/register') Sign up
