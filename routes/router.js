@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
-const isAuth = require('./authMiddleware').isAuth;
+//const isAuth = require('./authMiddleware').isAuth;
 
 const {
 	homeView,

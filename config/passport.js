@@ -2,8 +2,7 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const connection = require('./database');
-const { validPassword } = require('../lib/passwordUtils');
-const User = connection.models.User;
+const User = connection.User;
 const saltRounds = 12;
 
 // Strategies are responsible for authenticating requests by implementing an authentication mechanism that defines how to encode a credential, such as a password or an assertion from an identity provider (IdP), in a request.
@@ -29,10 +28,12 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    User.findbyId(id, (err, user) => {
-        done(err, user);
-    });
-})
+    User.findById(id).then(user =>{
+        done(null, user);
+    }).catch(err => {
+        done(err, null);
+    })
+});
 
 // Local Strategy
 passport.use(
@@ -56,8 +57,10 @@ passport.use(
                         })
                     }
                 } else {
-                    bcrypt.compare(password, newUser.password, (err, isMatch) => {
-                        if (err) throw err;
+                    bcrypt.compare(password, user.hashedPassword, (err, isMatch) => {
+                        if (err) {
+                            done(err, null)
+                        }
 
                         if (isMatch) {
                             return done(null, user);
@@ -72,3 +75,5 @@ passport.use(
             });
     })
 );
+
+module.exports = passport;

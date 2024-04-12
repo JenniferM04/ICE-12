@@ -98,25 +98,23 @@ const getLoginSuccess = (req, res) => {
  * @param {*} res
  * @param {*} nex
  */
-exports.postLogin = (req, res) => {
-  let usernameEntry = req.body.username;
-  let passwordEntry = req.body.password;
-
+exports.postLogin = (req, res, next) => {
+  // use passport to authenticate
   passport.authenticate("local", function(err, user, info){
     if (err) {
-      return res.status(400).json({ errors: err });
+      renderLogin(req, res, { errorMessage: err });
     }
 
     if (!user) {
-      return res.status(400).json({ errors: "No user found" });
+      getLoginFailure(req, res);
     }
 
     req.logIn(user, function(err) {
       if (err) {
-        return res.status(400).json({ errors: err });  
+        renderLogin(req, res, { errorMessage: err }); 
       }
 
-      return res.status(200).json({ success: `logged in as ${user,id}`});
+      getLoginSuccess(req, res);
     });
 
   })(req, res, next);
